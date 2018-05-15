@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/hyzhak/tensorflow-js-experiments/issues"
   },
-  "homepage": "https://github.com/hyzhak/tensorflow-js-experiments#readme"
+  "homepage": "https://github.com/hyzhak/tensorflow-js-experiments#readme",
+  "dependencies": {
+    "@tensorflow/tfjs": "^0.10.3"
+  }
 }

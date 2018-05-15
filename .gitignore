@@ -1,2 +1,6 @@
 # Dev env
 .idea
+
+
+# deps
+node_modules
