@@ -1,6 +1,9 @@
-# Dev env
-.idea
-
+# build
+.cache
+dist
 
 # deps
 node_modules
+
+# Dev env
+.idea
