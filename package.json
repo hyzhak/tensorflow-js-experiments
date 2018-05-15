@@ -1,0 +1,28 @@
+{
+  "name": "tensorflow-js-experiments",
+  "version": "0.0.1",
+  "description": "it is just my experiments with tensorflow.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyzhak/tensorflow-js-experiments.git"
+  },
+  "keywords": [
+    "tensorflow",
+    "machine",
+    "learning",
+    "deep",
+    "learning",
+    "cnn",
+    "experiments"
+  ],
+  "author": "Eugene Krevenets (ievgenii.krevenets@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hyzhak/tensorflow-js-experiments/issues"
+  },
+  "homepage": "https://github.com/hyzhak/tensorflow-js-experiments#readme"
+}
