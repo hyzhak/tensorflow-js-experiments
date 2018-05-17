@@ -28,7 +28,9 @@
   },
   "homepage": "https://github.com/hyzhak/tensorflow-js-experiments#readme",
   "dependencies": {
-    "@tensorflow/tfjs": "^0.10.3"
+    "@tensorflow/tfjs": "^0.10.3",
+    "vega-embed": "^3.9.0",
+    "vega-lite": "^2.4.3"
   },
   "devDependencies": {
     "parcel-bundler": "^1.8.1"
