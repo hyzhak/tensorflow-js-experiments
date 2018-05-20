@@ -4,7 +4,7 @@
   "description": "it is just my experiments with tensorflow.js",
   "main": "index.js",
   "scripts": {
-    "watch": "NODE_ENV=development parcel --log-level 3 index.html ",
+    "watch": "NODE_ENV=development parcel --log-level 3 --no-hmr index.html ",
     "build": "NODE_ENV=production parcel build index.html  --no-minify --public-url ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -29,10 +29,14 @@
   "homepage": "https://github.com/hyzhak/tensorflow-js-experiments#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^0.10.3",
+    "vega": "^4.0.0-rc.1",
     "vega-embed": "^3.9.0",
     "vega-lite": "^2.4.3"
   },
   "devDependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "parcel-bundler": "^1.8.1"
   }
 }
