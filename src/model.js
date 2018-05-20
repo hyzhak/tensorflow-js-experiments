@@ -86,7 +86,7 @@ async function dynamicGraphic() {
 
 // dynamicGraphic();
 
-async function solvePolynomialEquation() {
+async function solvePolynomialRegression() {
     const a = tf.variable(tf.scalar(Math.random()));
     const b = tf.variable(tf.scalar(Math.random()));
     const c = tf.variable(tf.scalar(Math.random()));
@@ -174,4 +174,4 @@ async function solvePolynomialEquation() {
     predictionsAfter.dispose();
 }
 
-solvePolynomialEquation();
+solvePolynomialRegression();
