@@ -45,7 +45,9 @@ async function dynamicGraphic() {
         }
     };
 
-    const res = await vegaEmbed(parentEl, vlSpec);
+    const res = await vegaEmbed(parentEl, vlSpec, {
+        actions: false,
+    });
 
     /**
      * Generates a new tuple with random walk.
