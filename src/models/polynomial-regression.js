@@ -29,7 +29,7 @@ function generateData(numPoints, coeff, sigma = 0.04) {
             xs,
             ys: ysNormalized
         };
-    })
+    });
 }
 
 function loss(predictions, labels) {
