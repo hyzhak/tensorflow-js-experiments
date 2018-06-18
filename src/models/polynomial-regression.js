@@ -47,6 +47,8 @@ class PolynomialRegressionModel {
     this.d = tf.variable(tf.scalar(Math.random()));
 
     this.optimizer = tf.train.sgd(learningRate);
+
+    this.lossArray = [];
   }
 
   /**
@@ -68,7 +70,12 @@ class PolynomialRegressionModel {
     for (let iter = 0; iter < numIterations; iter++) {
       this.optimizer.minimize(() => {
         const predsYs = this.predict(xs);
-        return loss(predsYs, ys);
+        const lossRes = loss(predsYs, ys);
+        lossRes.data()
+          .then((value) => {
+            this.lossArray.push(value[0]);
+          });
+        return lossRes;
       });
 
       // Use tf.nextFrame to not block the browser.
@@ -97,4 +104,8 @@ export async function solvePolynomialRegression() {
 
   predictionsBefore.dispose();
   predictionsAfter.dispose();
+
+  return {
+    loss: model.lossArray,
+  };
 }

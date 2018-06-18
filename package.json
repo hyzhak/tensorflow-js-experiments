@@ -29,6 +29,7 @@
   "homepage": "https://github.com/hyzhak/tensorflow-js-experiments#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^0.10.3",
+    "lodash": "^4.17.10",
     "most": "^1.7.3",
     "vega": "^4.0.0-rc.1",
     "vega-embed": "^3.9.0",

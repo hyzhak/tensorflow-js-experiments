@@ -85,6 +85,37 @@ async function dynamicGraphic() {
   }, 1000 / 30);
 }
 
+/**
+ * Map single values to Array of {x,y}
+ *
+ * @param values
+ */
+const mapToXY = (values) => values.map((y, idx) => ({x: idx, y}));
+
 // dynamicGraphic();
 
-solvePolynomialRegression();
+async function drawLoss() {
+  const {loss} = await solvePolynomialRegression();
+
+  const values = mapToXY(loss);
+  console.log('values', JSON.stringify(values));
+
+  // draw graphic
+  const parentEl = document.getElementById('graphics');
+
+  var vlSpec = {
+    '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
+    'data': {values},
+    'width': 400,
+    'mark': 'line',
+    'encoding': {
+      'x': {'field': 'x', 'type': 'quantitative'},
+      'y': {"field": "y", "type": "quantitative"},
+      // "color": {"field": "category", "type": "nominal"}
+    }
+  };
+
+  const res = await vegaEmbed(parentEl, vlSpec);
+}
+
+drawLoss();
