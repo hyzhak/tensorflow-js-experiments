@@ -1,4 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
+import {Observable} from 'rxjs';
 
 function generateData(numPoints, coeff, sigma = 0.04) {
   return tf.tidy(() => {
@@ -49,6 +50,10 @@ class PolynomialRegressionModel {
     this.optimizer = tf.train.sgd(learningRate);
 
     this.lossArray = [];
+
+    this.lossStream = new Observable.create((observer) => {
+      this.lossObserver = observer;
+    });
   }
 
   /**
@@ -73,6 +78,7 @@ class PolynomialRegressionModel {
         const lossRes = loss(predsYs, ys);
         lossRes.data()
           .then((value) => {
+            this.lossObserver.next(value[0]);
             this.lossArray.push(value[0]);
           });
         return lossRes;
@@ -81,10 +87,11 @@ class PolynomialRegressionModel {
       // Use tf.nextFrame to not block the browser.
       await tf.nextFrame();
     }
+    this.lossObserver.complete();
   }
 }
 
-export async function solvePolynomialRegression() {
+export function polynomialRegression() {
   const learningRate = 0.5;
   const numIterations = 75;
   const trueCoefficients = {a: -.8, b: -.2, c: .9, d: .5};
@@ -92,20 +99,25 @@ export async function solvePolynomialRegression() {
 
   const model = new PolynomialRegressionModel();
 
-  // estimate before train
-  const predictionsBefore = model.predict(trainingData.xs);
-  predictionsBefore.sub(trainingData.ys).mean().print();
-
-  // train
-  await model.train(trainingData.xs, trainingData.ys, numIterations);
-
-  const predictionsAfter = model.predict(trainingData.xs);
-  predictionsAfter.sub(trainingData.ys).mean().print();
-
-  predictionsBefore.dispose();
-  predictionsAfter.dispose();
+  model.lossStream
+    .subscribe(s => console.log(s, Date.now()));
 
   return {
-    loss: model.lossArray,
+    lossStream: model.lossStream,
+    train: async function() {
+      // estimate before training
+      const predictionsBefore = model.predict(trainingData.xs);
+      predictionsBefore.sub(trainingData.ys).mean().print();
+
+      //train
+      await model.train(trainingData.xs, trainingData.ys, numIterations)
+
+      // estimate after training
+      const predictionsAfter = model.predict(trainingData.xs);
+      predictionsAfter.sub(trainingData.ys).mean().print();
+
+      predictionsBefore.dispose();
+      predictionsAfter.dispose();
+    }
   };
 }

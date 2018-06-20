@@ -3,7 +3,7 @@ import * as tf from '@tensorflow/tfjs';
 import * as vega from 'vega';
 import vegaEmbed from 'vega-embed';
 
-import {solvePolynomialRegression} from './models/polynomial-regression';
+import {polynomialRegression} from './models/polynomial-regression';
 import * as ui from './ui';
 
 async function singleUnitExample() {
@@ -85,37 +85,44 @@ async function dynamicGraphic() {
   }, 1000 / 30);
 }
 
-/**
- * Map single values to Array of {x,y}
- *
- * @param values
- */
-const mapToXY = (values) => values.map((y, idx) => ({x: idx, y}));
+const lossGraphicSpec = {
+  '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
+  'data': {
+    'name': "loss",
+  },
+  'width': 400,
+  'mark': 'line',
+  'encoding': {
+    'x': {'field': 'x', 'type': 'quantitative'},
+    'y': {"field": "y", "type": "quantitative"},
+  }
+};
 
-// dynamicGraphic();
-
-async function drawLoss() {
-  const {loss} = await solvePolynomialRegression();
-
-  const values = mapToXY(loss);
-  console.log('values', JSON.stringify(values));
+async function drawLoss({lossGraphicContainerId}) {
+  const model = polynomialRegression();
 
   // draw graphic
-  const parentEl = document.getElementById('graphics');
+  const parentEl = document.getElementById(lossGraphicContainerId);
+  console.log('parentEl', parentEl);
+  if (!parentEl) {
+    throw new Error(`target element ${lossGraphicContainerId} is not defined`)
+  }
 
-  var vlSpec = {
-    '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
-    'data': {values},
-    'width': 400,
-    'mark': 'line',
-    'encoding': {
-      'x': {'field': 'x', 'type': 'quantitative'},
-      'y': {"field": "y", "type": "quantitative"},
-      // "color": {"field": "category", "type": "nominal"}
-    }
-  };
+  const result = await vegaEmbed(parentEl, lossGraphicSpec);
 
-  const res = await vegaEmbed(parentEl, vlSpec);
+  let index = 0;
+  model.lossStream
+    .subscribe(y => {
+      result.view.change(
+        'loss',
+        vega.changeset().insert([{x: index, y}]),
+      ).run();
+      index++;
+    });
+
+  await model.train();
 }
 
-drawLoss();
+setTimeout(() => {
+  drawLoss({lossGraphicContainerId: 'graphics'});
+});
