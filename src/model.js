@@ -98,7 +98,20 @@ const lossGraphicSpec = {
   }
 };
 
-async function drawLoss({lossGraphicContainerId}) {
+/**
+ * The pipeline of training polynomial regression model
+ *
+ * - create the model
+ * - create loss functions graphic
+ * - train the model and draw the loss function
+ *
+ * TODO:
+ * - draw the model (on-fly)
+ *
+ * @param lossGraphicContainerId
+ * @returns {Promise.<void>}
+ */
+async function trainingPolynomialRegression({lossGraphicContainerId}) {
   const model = polynomialRegression();
 
   // draw graphic
@@ -124,5 +137,5 @@ async function drawLoss({lossGraphicContainerId}) {
 }
 
 setTimeout(() => {
-  drawLoss({lossGraphicContainerId: 'graphics'});
+  trainingPolynomialRegression({lossGraphicContainerId: 'graphics'});
 });
