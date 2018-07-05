@@ -108,29 +108,36 @@ const lossGraphicSpec = {
  * TODO:
  * - draw the model (on-fly)
  *
- * @param lossGraphicContainerId
+ * @param lossContainerId
+ * @param modelContainerId
  * @returns {Promise.<void>}
  */
-export async function trainingPolynomialRegression({lossGraphicContainerId}) {
+export async function trainingPolynomialRegression({lossContainerId, modelContainerId}) {
   const model = polynomialRegression();
 
   // draw graphic
-  const parentEl = document.getElementById(lossGraphicContainerId);
-  if (!parentEl) {
-    throw new Error(`target element ${lossGraphicContainerId} is not defined`)
+  const lossContainerEl = document.getElementById(lossContainerId);
+  if (!lossContainerEl) {
+    throw new Error(`Loss container ${lossContainerId} is not defined`);
   }
 
-  const result = await vegaEmbed(parentEl, lossGraphicSpec);
+  const lossGraphics = await vegaEmbed(lossContainerEl, lossGraphicSpec);
 
+  // track loss function changes and reflec them to loss graphics
   let index = 0;
   model.lossStream
     .subscribe(y => {
-      result.view.change(
+      lossGraphics.view.change(
         'loss',
         vega.changeset().insert([{x: index, y}]),
       ).run();
       index++;
     });
+
+  const modelContainerEl = document.getElementById(modelContainerId);
+  if (!modelContainerEl) {
+    throw new Error(`Model container ${modelContainerId} is not defined`);
+  }
 
   await model.train();
 }
