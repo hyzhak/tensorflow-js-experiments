@@ -1,3 +1,5 @@
+import './main.scss';
+
 import * as tf from '@tensorflow/tfjs';
 
 import * as vega from 'vega';
