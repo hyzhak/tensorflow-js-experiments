@@ -1,5 +1,7 @@
 "use strict";
 
-import model from './src/model';
+import * as model from './src/model';
 
-console.log('hello experiments!');
+document.addEventListener('DOMContentLoaded', () => {
+  model.trainingPolynomialRegression({lossGraphicContainerId: 'graphics'});
+});

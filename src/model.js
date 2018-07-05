@@ -111,12 +111,11 @@ const lossGraphicSpec = {
  * @param lossGraphicContainerId
  * @returns {Promise.<void>}
  */
-async function trainingPolynomialRegression({lossGraphicContainerId}) {
+export async function trainingPolynomialRegression({lossGraphicContainerId}) {
   const model = polynomialRegression();
 
   // draw graphic
   const parentEl = document.getElementById(lossGraphicContainerId);
-  console.log('parentEl', parentEl);
   if (!parentEl) {
     throw new Error(`target element ${lossGraphicContainerId} is not defined`)
   }
@@ -135,7 +134,3 @@ async function trainingPolynomialRegression({lossGraphicContainerId}) {
 
   await model.train();
 }
-
-setTimeout(() => {
-  trainingPolynomialRegression({lossGraphicContainerId: 'graphics'});
-});
