@@ -100,6 +100,20 @@ const lossGraphicSpec = {
   }
 };
 
+const modelGraphicSpec = {
+  '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
+  'data': {
+    'name': "dataset",
+  },
+  'width': 400,
+  'mark': 'line',
+  'encoding': {
+    'x': {'field': 'x', 'type': 'quantitative'},
+    'y': {"field": "y", "type": "quantitative"},
+  }
+};
+
+
 /**
  * The pipeline of training polynomial regression model
  *
@@ -140,6 +154,8 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
   if (!modelContainerEl) {
     throw new Error(`Model container ${modelContainerId} is not defined`);
   }
+
+  const modelGraphics = await vegaEmbed(modelContainerEl, modelGraphicSpec);
 
   await model.train();
 }
