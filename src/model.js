@@ -1,5 +1,6 @@
 import './main.scss';
 
+import {zip} from 'lodash';
 import * as tf from '@tensorflow/tfjs';
 
 import * as vega from 'vega';
@@ -113,6 +114,37 @@ const modelGraphicSpec = {
   }
 };
 
+function generateData(numPoints, coeff, sigma = 0.04) {
+  return tf.tidy(() => {
+    const [a, b, c, d] = [
+      tf.scalar(coeff.a), tf.scalar(coeff.b),
+      tf.scalar(coeff.c), tf.scalar(coeff.d)
+    ];
+
+    const xs = tf.randomUniform([numPoints], -1, 1);
+
+    // Generate polynomial data
+    const three = tf.scalar(3, 'int32');
+    const ys = a.mul(xs.pow(three))
+      .add(b.mul(xs.square()))
+      .add(c.mul(xs))
+      .add(d)
+      // Add random noise to the generated data
+      // to make the problem a bit more interesting
+      .add(tf.randomNormal([numPoints], 0, sigma));
+
+    // Normalize the y values to the range 0 to 1.
+    const ymin = ys.min();
+    const ymax = ys.max();
+    const yrange = ymax.sub(ymin);
+    const ysNormalized = ys.sub(ymin).div(yrange);
+
+    return {
+      xs,
+      ys: ysNormalized
+    };
+  });
+}
 
 /**
  * The pipeline of training polynomial regression model
@@ -129,6 +161,10 @@ const modelGraphicSpec = {
  * @returns {Promise.<void>}
  */
 export async function trainingPolynomialRegression({lossContainerId, modelContainerId}) {
+  const learningRate = 0.5;
+  const trueCoefficients = {a: -.8, b: -.2, c: .9, d: .5};
+  const trainingData = generateData(100, trueCoefficients);
+
   const model = polynomialRegression();
 
   // draw graphic
@@ -155,7 +191,12 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
     throw new Error(`Model container ${modelContainerId} is not defined`);
   }
 
+  const xs = await trainingData.xs.data();
+  const xy = await trainingData.ys.data();
+
+  const dataset = zip(xs, xy).map(([x, y]) => ({x, y}));
+  modelGraphicSpec.data.values = dataset;
   const modelGraphics = await vegaEmbed(modelContainerEl, modelGraphicSpec);
 
-  await model.train();
+  await model.train({numIterations: 75, trainingData});
 }
