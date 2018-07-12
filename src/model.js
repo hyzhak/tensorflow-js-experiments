@@ -90,6 +90,7 @@ async function dynamicGraphic() {
 
 const lossGraphicSpec = {
   '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
+  "title": "loss",
   'data': {
     'name': "loss",
   },
