@@ -89,16 +89,16 @@ async function dynamicGraphic() {
 }
 
 const lossGraphicSpec = {
-  '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
+  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
   "title": "loss",
-  'data': {
-    'name': "loss",
+  "data": {
+    "name": "loss",
   },
-  'width': 400,
-  'mark': 'line',
-  'encoding': {
-    'x': {'field': 'x', 'type': 'quantitative'},
-    'y': {"field": "y", "type": "quantitative"},
+  "width": 400,
+  "mark": "line",
+  "encoding": {
+    "x": {"field": "x", "type": "quantitative"},
+    "y": {"field": "y", "type": "quantitative"},
   }
 };
 
