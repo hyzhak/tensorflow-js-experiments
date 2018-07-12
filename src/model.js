@@ -105,7 +105,7 @@ const lossGraphicSpec = {
 const modelGraphicSpec = {
   "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
   "width": 400,
-  "title": "aproximation",
+  "title": "model",
   "layer": [{
     "data": {
       "name": "dataset",
@@ -167,8 +167,6 @@ function generateData(numPoints, coeff, sigma = 0.04) {
  * - create the model
  * - create loss functions graphic
  * - train the model and draw the loss function
- *
- * TODO:
  * - draw the model (on-fly)
  *
  * @param lossContainerId
