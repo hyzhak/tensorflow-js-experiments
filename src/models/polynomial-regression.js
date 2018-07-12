@@ -22,6 +22,10 @@ class PolynomialRegressionModel {
     this.lossStream = new Observable.create((observer) => {
       this.lossObserver = observer;
     });
+
+    this.predictionStream = new Observable.create((observer) => {
+      this.predictionObserver = observer;
+    });
   }
 
   /**
@@ -33,6 +37,13 @@ class PolynomialRegressionModel {
       .add(this.b.mul(x.square())) // + b * x ^ 2
       .add(this.c.mul(x)) // + c * x
       .add(this.d); // + d
+  }
+
+  async modelValues() {
+    const xspace = tf.linspace(-1, 1, 100);
+    const x = xspace.dataSync();
+    const y = await this.model(xspace).data();
+    return {x, y};
   }
 
   predict(x) {
@@ -49,6 +60,7 @@ class PolynomialRegressionModel {
             this.lossObserver.next(value[0]);
             this.lossArray.push(value[0]);
           });
+        this.predictionObserver.next();
         return lossRes;
       });
 
@@ -67,6 +79,8 @@ export function polynomialRegression() {
 
   return {
     lossStream: model.lossStream,
+    predictionStream: model.predictionStream,
+    modelValues: model.modelValues.bind(model),
     train: async function({numIterations, trainingData}) {
       // estimate before training
       const predictionsBefore = model.predict(trainingData.xs);

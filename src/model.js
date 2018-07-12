@@ -102,16 +102,30 @@ const lossGraphicSpec = {
 };
 
 const modelGraphicSpec = {
-  '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
-  'data': {
-    'name': "dataset",
-  },
-  'width': 400,
-  'mark': 'line',
-  'encoding': {
-    'x': {'field': 'x', 'type': 'quantitative'},
-    'y': {"field": "y", "type": "quantitative"},
-  }
+  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+  "width": 400,
+  "title": "aproximation",
+  "layer": [{
+    "data": {
+      "name": "dataset",
+    },
+    "mark": "circle",
+    "encoding": {
+      "x": {"field": "x", "type": "quantitative"},
+      "y": {"field": "y", "type": "quantitative", "scale": {"domain": [0.0,1.0]}},
+      "title": "dataset",
+    }
+  }, {
+    "data": {
+      "name": "approximation",
+    },
+    "mark": "line",
+    "encoding": {
+      "x": {"field": "x", "type": "quantitative"},
+      "y": {"field": "y", "type": "quantitative", "scale": {"domain": [0.0,1.0]}},
+      "title": "approximation",
+    }
+  }],
 };
 
 function generateData(numPoints, coeff, sigma = 0.04) {
@@ -195,8 +209,22 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
   const xy = await trainingData.ys.data();
 
   const dataset = zip(xs, xy).map(([x, y]) => ({x, y}));
-  modelGraphicSpec.data.values = dataset;
+  modelGraphicSpec.layer[0].data.values = dataset;
   const modelGraphics = await vegaEmbed(modelContainerEl, modelGraphicSpec);
+  model.predictionStream
+    .subscribe(async function (a, b, c, d) {
+      // draw prediction
+
+      // 1) generate points (x,y)
+      let points = await model.modelValues();
+      points = zip(points.x, points.y).map(([x, y]) => ({x, y}));
+
+      // 2) add data to
+      modelGraphics.view.change(
+        'approximation',
+        vega.changeset().remove(() => true).insert(points),
+      ).run();
+    });
 
   await model.train({numIterations: 75, trainingData});
 }
