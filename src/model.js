@@ -97,8 +97,18 @@ const lossGraphicSpec = {
   "width": 400,
   "mark": "line",
   "encoding": {
-    "x": {"field": "x", "type": "quantitative", "scale": {"domain": [0.0,80.0]}, "axis": {"title": "iteration"}},
-    "y": {"field": "y", "type": "quantitative", "scale": {"domain": [0.0,0.25]}},
+    "x": {
+      "field": "x",
+      "type": "quantitative",
+      "scale": {"domain": [0.0,80.0]},
+      "axis": {"title": "iteration"},
+    },
+    "y": {
+      "field": "y",
+      "type": "quantitative",
+      "scale": {"domain": [0.0,0.25]},
+      "axis": {"title": "loss"},
+    },
   }
 };
 
