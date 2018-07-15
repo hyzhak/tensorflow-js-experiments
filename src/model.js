@@ -97,8 +97,8 @@ const lossGraphicSpec = {
   "width": 400,
   "mark": "line",
   "encoding": {
-    "x": {"field": "x", "type": "quantitative"},
-    "y": {"field": "y", "type": "quantitative"},
+    "x": {"field": "x", "type": "quantitative", "scale": {"domain": [0.0,80.0]}, "axis": {"title": "iteration"}},
+    "y": {"field": "y", "type": "quantitative", "scale": {"domain": [0.0,0.25]}},
   }
 };
 
@@ -186,7 +186,9 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
     throw new Error(`Loss container ${lossContainerId} is not defined`);
   }
 
-  const lossGraphics = await vegaEmbed(lossContainerEl, lossGraphicSpec);
+  const lossGraphics = await vegaEmbed(lossContainerEl, lossGraphicSpec, {
+    actions: false,
+  });
 
   // track loss function changes and reflec them to loss graphics
   let index = 0;
@@ -209,7 +211,9 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
 
   const dataset = zip(xs, xy).map(([x, y]) => ({x, y}));
   modelGraphicSpec.layer[0].data.values = dataset;
-  const modelGraphics = await vegaEmbed(modelContainerEl, modelGraphicSpec);
+  const modelGraphics = await vegaEmbed(modelContainerEl, modelGraphicSpec, {
+    actions: false,
+  });
   model.predictionStream
     .subscribe(async function (a, b, c, d) {
       // draw prediction
