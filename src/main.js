@@ -66,7 +66,7 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
 
   const datasetValues = zip(xs, xy).map(([x, y]) => ({x, y}));
 
-  const model = polynomialRegression();
+  const model = polynomialRegression({learningRate});
 
   const lossG = await lossGraphics.build(lossContainerId);
   let index = 0;

@@ -17,8 +17,6 @@ class PolynomialRegressionModel {
 
     this.optimizer = tf.train.sgd(learningRate);
 
-    this.lossArray = [];
-
     this.lossStream = new Observable.create((observer) => {
       this.lossObserver = observer;
     });
@@ -58,7 +56,6 @@ class PolynomialRegressionModel {
         lossRes.data()
           .then((value) => {
             this.lossObserver.next(value[0]);
-            this.lossArray.push(value[0]);
           });
         this.predictionObserver.next();
         return lossRes;
@@ -67,21 +64,20 @@ class PolynomialRegressionModel {
       // Use tf.nextFrame to not block the browser.
       await tf.nextFrame();
     }
+
     this.lossObserver.complete();
+    this.predictionObserver.complete();
   }
 }
 
 export function polynomialRegression() {
   const model = new PolynomialRegressionModel();
 
-  model.lossStream
-    .subscribe(s => console.log(s, Date.now()));
-
   return {
     lossStream: model.lossStream,
     predictionStream: model.predictionStream,
     modelValues: model.modelValues.bind(model),
-    train: async function({numIterations, trainingData}) {
+    train: async function ({numIterations, trainingData}) {
       // estimate before training
       const predictionsBefore = model.predict(trainingData.xs);
       predictionsBefore.sub(trainingData.ys).mean().print();
