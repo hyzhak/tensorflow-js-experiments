@@ -7,30 +7,8 @@ import vegaEmbed from 'vega-embed';
 
 import {polynomialRegression} from './models/polynomial-regression';
 
+import * as lossGraphics from './ui/loss-graphics';
 
-const lossGraphicSpec = {
-  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
-  "title": "loss",
-  "data": {
-    "name": "loss",
-  },
-  "width": 400,
-  "mark": "line",
-  "encoding": {
-    "x": {
-      "field": "x",
-      "type": "quantitative",
-      "scale": {"domain": [0.0, 80.0]},
-      "axis": {"title": "iteration"},
-    },
-    "y": {
-      "field": "y",
-      "type": "quantitative",
-      "scale": {"domain": [0.0, 0.25]},
-      "axis": {"title": "loss"},
-    },
-  }
-};
 
 const modelGraphicSpec = {
   "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
@@ -110,21 +88,13 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
 
   const model = polynomialRegression();
 
-  // draw graphic
-  const lossContainerEl = document.getElementById(lossContainerId);
-  if (!lossContainerEl) {
-    throw new Error(`Loss container ${lossContainerId} is not defined`);
-  }
-
-  const lossGraphics = await vegaEmbed(lossContainerEl, lossGraphicSpec, {
-    actions: false,
-  });
+  const lossG = await lossGraphics.build(lossContainerId);
 
   // track loss function changes and reflec them to loss graphics
   let index = 0;
   model.lossStream
     .subscribe(y => {
-      lossGraphics.view.change(
+      lossG.view.change(
         'loss',
         vega.changeset().insert([{x: index, y}]),
       ).run();
