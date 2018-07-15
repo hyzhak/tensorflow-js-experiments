@@ -8,34 +8,9 @@ import vegaEmbed from 'vega-embed';
 import {polynomialRegression} from './models/polynomial-regression';
 
 import * as lossGraphics from './ui/loss-graphics';
+import * as modelGraphics from './ui/model-graphics';
 
 
-const modelGraphicSpec = {
-  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
-  "width": 400,
-  "title": "model",
-  "layer": [{
-    "data": {
-      "name": "dataset",
-    },
-    "mark": "circle",
-    "encoding": {
-      "x": {"field": "x", "type": "quantitative"},
-      "y": {"field": "y", "type": "quantitative", "scale": {"domain": [0.0, 1.0]}},
-      "title": "dataset",
-    }
-  }, {
-    "data": {
-      "name": "approximation",
-    },
-    "mark": "line",
-    "encoding": {
-      "x": {"field": "x", "type": "quantitative"},
-      "y": {"field": "y", "type": "quantitative", "scale": {"domain": [0.0, 1.0]}},
-      "title": "approximation",
-    }
-  }],
-};
 
 function generateData(numPoints, coeff, sigma = 0.04) {
   return tf.tidy(() => {
@@ -86,11 +61,14 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
   const trueCoefficients = {a: -.8, b: -.2, c: .9, d: .5};
   const trainingData = generateData(100, trueCoefficients);
 
+  const xs = await trainingData.xs.data();
+  const xy = await trainingData.ys.data();
+
+  const datasetValues = zip(xs, xy).map(([x, y]) => ({x, y}));
+
   const model = polynomialRegression();
 
   const lossG = await lossGraphics.build(lossContainerId);
-
-  // track loss function changes and reflec them to loss graphics
   let index = 0;
   model.lossStream
     .subscribe(y => {
@@ -101,29 +79,17 @@ export async function trainingPolynomialRegression({lossContainerId, modelContai
       index++;
     });
 
-  const modelContainerEl = document.getElementById(modelContainerId);
-  if (!modelContainerEl) {
-    throw new Error(`Model container ${modelContainerId} is not defined`);
-  }
-
-  const xs = await trainingData.xs.data();
-  const xy = await trainingData.ys.data();
-
-  const dataset = zip(xs, xy).map(([x, y]) => ({x, y}));
-  modelGraphicSpec.layer[0].data.values = dataset;
-  const modelGraphics = await vegaEmbed(modelContainerEl, modelGraphicSpec, {
-    actions: false,
-  });
+  const modelG = await modelGraphics.build(modelContainerId, datasetValues);
   model.predictionStream
     .subscribe(async function (a, b, c, d) {
       // draw prediction
 
-      // 1) generate points (x,y)
+      // 1) generate points (x,y) (interpolate)
       let points = await model.modelValues();
       points = zip(points.x, points.y).map(([x, y]) => ({x, y}));
 
       // 2) add data to
-      modelGraphics.view.change(
+      modelG.view.change(
         'approximation',
         vega.changeset().remove(() => true).insert(points),
       ).run();
