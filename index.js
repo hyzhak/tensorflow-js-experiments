@@ -1,9 +1,9 @@
 "use strict";
 
-import * as model from './src/model';
+import * as main from './src/main';
 
 document.addEventListener('DOMContentLoaded', () => {
-  model.trainingPolynomialRegression({
+  main.trainingPolynomialRegression({
     lossContainerId: 'loss',
     modelContainerId: 'model',
   });
