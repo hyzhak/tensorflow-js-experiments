@@ -32,7 +32,10 @@ export async function build(containerId, values) {
       "data": {
         "name": "approximation",
       },
-      "mark": "line",
+      "mark": {
+        "color": "red",
+        "type": "line",
+      },
       "encoding": {
         "x": {"field": "x", "type": "quantitative"},
         "y": {"field": "y", "type": "quantitative", "scale": {"domain": [0.0, 1.0]}},

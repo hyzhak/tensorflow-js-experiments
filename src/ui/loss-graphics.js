@@ -8,7 +8,10 @@ const lossGraphicSpec = {
     "name": "loss",
   },
   "width": 400,
-  "mark": "line",
+  "mark": {
+    "color": "red",
+    "type": "line",
+  },
   "encoding": {
     "x": {
       "field": "x",
