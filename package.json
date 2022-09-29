@@ -32,8 +32,8 @@
     "bootstrap": "^4.1.2",
     "lodash": "^4.17.10",
     "rxjs": "^6.2.2",
-    "vega": "^4.1.0",
-    "vega-embed": "^3.18.1",
+    "vega": "^5.22.1",
+    "vega-embed": "^6.21.0",
     "vega-lite": "^2.6.0"
   },
   "devDependencies": {
